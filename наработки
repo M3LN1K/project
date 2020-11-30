@@ -1,0 +1,56 @@
+def welcome(message):
+	sti = open('stikers/AnimatedSticker.tgs', 'rb')
+	bot.send_sticker(message.chat.id, sti)
+
+	marckup = types.InlineKeyboardMarkup(row_width=2)
+	but_1 =types.InlineKeyboardButton("Подать заявку на работу", callback_data="application")
+	but_2 =types.InlineKeyboardButton("Записаться на сеанс", callback_data="session")
+	but_3 =types.InlineKeyboardButton("Посмотреть услуги", callback_data="services")
+	but_4 =types.InlineKeyboardButton("Специалисты", callback_data="Specialists")
+	but_5 =types.InlineKeyboardButton("Информация о нас", callback_data="info")
+
+	marckup.add(but_1, but_2)
+	marckup.add(but_3, but_4)
+	marckup.add(but_5)
+
+	bot.send_message(message.chat.id, "Приветствую, {0.first_name}! \nЯ - {1.first_name}, специалист от имидж-студии Какетка."
+		.format(message.from_user, bot.get_me(), parse_mode='html'),  reply_markup=marckup)
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+	try:
+		if call.message:
+			if call.data == 'application':
+
+				application = types.InlineKeyboardMarkup(row_width=2)
+				but_1 = types.InlineKeyboardButton("Да", callback_data="yes")
+				but_2 = types.InlineKeyboardButton("Нет", callback_data="no")
+
+				application.add(but_1, but_2)
+
+				bot.send_message(call.message.chat.id, "Начнем?", reply_markup=application)
+
+				bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, 
+					text="Приветствуем вас в разделе о работе. Я прошу вас пройти небольшой тест для оформленя вашей заявки. В скорем времени ее посмотрит наш деректор и с вам свяжетьс для дальнейших действий.")
+			elif call.data == 'yes':
+					keyboard = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+					reg_button = types.KeyboardButton(text="Отправить номер телефона", request_contact=True)
+					keyboard.add(reg_button)
+					nomer = bot.send_message(message.chat.id, 'Оставьте ваш контактный номер чтобы наш менеджер смог связаться с вами.', reply_markup=keyboard)
+					bot.register_next_step_handler(nomer, save)
+					doc = open('client.txt', 'a')
+					doc.write("Услуга - {service}\n".format(service=message.text))
+					
+					bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, 
+					text="Хорошо! Введите свой номер телефона: ", reply_markup=yes)
+
+	except Exception as e:
+		raise e
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+	try:
+		if call.message:
+			if call.data == 'application':
+
+	except Exception as e:
+		print(repr(e))

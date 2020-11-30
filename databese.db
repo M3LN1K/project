@@ -1,0 +1,21 @@
+import sqlite3
+
+_connection = None
+
+def get_connection():
+	global _connection 
+	if _connection is None:
+		_connection = sqlite3.connect('databese.db')
+	return _connection
+
+def init_db(force: bool - False):
+	conn = get_connection()
+	c = conn.cursor()
+
+	#Сщщбщение от пользователя
+	if force:
+		c.execute('DROP TABLE IF EXISTS users_message')
+
+	c.execute('''
+		CREATE TABLE IF EXISTS
+		''')
